@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_image_1000"
+    tools:context=".RegisterActivity">
+
+    <EditText
+        android:id="@+id/user"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/bg_btn1"
+        android:gravity="center"
+        android:hint="请输入用户名"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/user"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn1"
+        android:gravity="center"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:password="true"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/password1"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/password"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_btn1"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:hint="请再次输入密码"
+        android:inputType="textPassword"
+        android:password="true"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/password1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/bg_btn2"
+        android:text="注册"
+        android:textColor="#fff"
+        android:textSize="25sp" />
+
+</RelativeLayout>

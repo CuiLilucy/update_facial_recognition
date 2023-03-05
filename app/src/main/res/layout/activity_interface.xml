@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".interfaceActivity">
+
+    <RelativeLayout
+        android:id="@+id/RoundImageview_1"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_ground_0">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/rig_1"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="80dp"
+            android:src="@mipmap/ic_launcher"
+            app:shapeAppearanceOverlay="@style/circleImageStyle"/>
+
+        <TextView
+            android:id="@+id/rig_2"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="105dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/rig_1"
+            android:paddingLeft="20dp"
+            android:text="我"
+            android:textColor="#000"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/rig_3"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/rig_2"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="9dp"
+            android:layout_toRightOf="@id/rig_1"
+            android:background="@drawable/bg_register1"
+            android:text="个人信息"
+            android:textSize="10sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/itemGroup_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/RoundImageview_1"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/sign_1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/book" />
+
+        <TextView
+            android:id="@+id/ig_1"
+            android:layout_width="350dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toRightOf="@id/sign_1"
+            android:background="@drawable/bg_btn3"
+            android:text="我的日记"
+            android:textSize="17sp" />
+        <TextView
+            android:id="@+id/sign_2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/sign_1"
+            android:background="@drawable/lollipop"/>
+
+        <TextView
+            android:id="@+id/ig_2"
+            android:layout_width="350dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/ig_1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/sign_1"
+            android:background="@drawable/bg_btn3"
+            android:text="我的心情"
+            android:textSize="17sp" />
+        <TextView
+            android:id="@+id/sign_3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/sign_2"
+            android:background="@drawable/candy"/>
+
+        <TextView
+            android:id="@+id/ig_3"
+            android:layout_width="350dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/ig_2"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/sign_1"
+            android:background="@drawable/bg_btn3"
+            android:text="我的性格"
+            android:textSize="17sp" />
+        <TextView
+            android:id="@+id/sign_4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/sign_3"
+            android:background="@drawable/sunflower"/>
+        <TextView
+            android:id="@+id/ig_4"
+            android:layout_width="350dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/sign_1"
+            android:layout_below="@id/ig_3"
+            android:text="我的复盘"
+            android:textSize="17sp"
+            android:background="@drawable/bg_btn3"/>
+        <TextView
+            android:id="@+id/sign_5"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/sign_4"
+            android:background="@drawable/berry"/>
+
+        <TextView
+            android:id="@+id/ig_5"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_below="@id/ig_4"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/sign_1"
+            android:background="@drawable/bg_btn3"
+            android:text="我的情绪词典"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+
+
+
+
+
+</RelativeLayout>

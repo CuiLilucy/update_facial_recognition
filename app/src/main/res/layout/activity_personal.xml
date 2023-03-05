@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PersonalActivity"
+    android:orientation="vertical"
+    android:background="@drawable/bg_image_1000">
+
+    <!--    标题栏-->
+    <com.example.myapp5.widge.Title
+        android:id="@+id/tl_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"/>
+    <!--    头像-->
+    <LinearLayout
+        android:id="@+id/ll_portrait"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:paddingBottom="10dp">
+
+        <!--圆形图片-->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_head"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="50dp"
+            android:onClick="changeAvatar"
+            android:src="@mipmap/ic_launcher"
+            app:shapeAppearanceOverlay="@style/circleImageStyle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="修改头像"
+            android:textColor="#000000"
+            android:layout_gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
+
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/itemGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/name_0"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:paddingLeft="15dp"
+            android:text="昵称"
+            android:textSize="20sp"/>
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/name_0"
+            android:layout_height="50dp"/>
+        <TextView
+            android:id="@+id/gender_0"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/name_0"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="40dp"
+            android:paddingLeft="15dp"
+            android:text="性别"
+            android:textSize="20sp"/>
+        <EditText
+            android:id="@+id/gender"
+            android:layout_width="200dp"
+            android:layout_below="@id/name"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/gender_0"
+            android:layout_height="50dp"/>
+
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>

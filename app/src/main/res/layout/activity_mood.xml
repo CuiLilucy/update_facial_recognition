@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MoodActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/chart_0"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:gravity="bottom"
+            android:text="     心情统计"
+            android:textColor="#000000"
+            android:textSize="20dp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_below="@id/chart_0"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChar"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_below="@id/lineChart"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"/>
+
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:background="@drawable/bg_image_1000">
+
+    <EditText
+        android:id="@+id/user_input"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_btn1"
+        android:hint="请输入用户名"
+        android:layout_marginTop="260dp"
+        android:textSize="20sp"/>
+    // android:digits="0123456789"
+
+    <EditText
+        android:layout_marginTop="20dp"
+        android:id="@+id/password_input"
+        android:gravity="center"
+        android:background="@drawable/bg_btn1"
+        android:layout_centerHorizontal="true"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:hint="请输入密码"
+        android:inputType="textPassword"
+        android:layout_below="@id/user_input"
+        android:textSize="20sp"
+        android:password="true"/>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/password_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/bg_btn2"
+        android:text="登录"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+</RelativeLayout>

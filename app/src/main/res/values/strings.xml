@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_file_name">My Recording</string>
+
+    <string name="app_name">心潮</string>
+    <string name="hint_title">请输入标题</string>
+    <string name="hint_body">请输入日记内容</string>
+    <string name="save">保存</string>
+    <string name="textview">TextView</string>
+    <string name="delete">删除所有日记</string>
+    <string name="bill">日记日期</string>
+</resources>
