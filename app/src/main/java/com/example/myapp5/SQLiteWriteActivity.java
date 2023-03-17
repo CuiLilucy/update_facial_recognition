@@ -13,8 +13,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,17 +40,40 @@ import com.example.myapp5.cameraUtils.CameraUtils;
 import com.example.myapp5.cameraUtils.SPUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import com.tbruyelle.rxpermissions3.RxPermissions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+class MessageBody
+{
+  public UserInfo info;
+  public String response;
+  public SQLiteWriteActivity parent;
+};
+
 public class SQLiteWriteActivity extends AppCompatActivity implements View.OnClickListener,DatePickerDialog.OnDateSetListener {
+    private static final String TAG = "connectservererror";
     private UserDBHelper mHelper; // 声明一个用户数据库帮助器的对象
     private EditText title;
     private EditText text;
@@ -162,6 +188,75 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         date.setText(DateUtil.getDate(calendar)); // 设置账单的发生时间
     }
 
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        //handleMessage方法运行在主线程，处理子线程发送回来的数据。
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 0) {
+                MessageBody data = (MessageBody) msg.obj;
+                //Toast.makeText(data.parent, data.response,Toast.LENGTH_SHORT).show();
+                JSONObject json = null;
+                try {
+                   json = new JSONObject(data.response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                int maxScore = 0;
+                try {
+                    maxScore = json.getInt("value");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                UserInfo info = data.info;
+                String str = "已保存";
+                switch(maxScore)
+                {
+                    case 0 :
+                        info.Anger = ++Anger ;
+                        str = "心情：生气";
+                        break;
+                    case 1 :
+                        info.Disgust = ++Disguse ;
+                        str = "心情：恶心";
+                        break;
+                    case 2 :
+                        info.Fear = ++Fear ;
+                        str = "心情：害怕";
+                        break;
+                    case 3 :
+                        info.Happy = ++Happy ;
+                        str = "心情：高兴";
+                        break;
+                    case 4 :
+                        info.Neutral = ++Neutral ;
+                        str = "心情：平静";
+                        break;
+                    case 5:
+                        info.Sad = ++Sad ;
+                        str = "心情：悲伤";
+                        break;
+                    case 6 :
+                        info.Surprise = ++Surprise ;
+                        str = "心情：惊喜";
+                        break;
+                    default :
+                        str = "未知类别";
+                }
+                mHelper.save(info); // 把账单信息保存到数据库
+
+                Toast.makeText(data.parent, str,Toast.LENGTH_SHORT).show();
+                Float score = mText.getScore(getAllDiary());
+                ArrayList<Float> scores=new ArrayList<Float>();
+                loadArray(scores);
+                scores.add(score);
+                saveArray(scores);
+                data.parent.finish();
+            }
+        }
+    };
+
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.save_diary) {
@@ -191,44 +286,49 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             //resetPage(); // 重置页面
             //info.update_time = DateUtil.getNowDateTime("yyyy-MM-dd HH:mm:ss");
             //mHelper.insert(info); // 执行数据库帮助器的插入操作
-            MainActivity1 imageAnalysis = new MainActivity1();
-            int maxScore = imageAnalysis.runImageanalysis();
-            switch(maxScore)
-            {
-                case 0 :
-                    info.Anger = Anger++ ;
-                    break;
-                case 1 :
-                    info.Disgust = Disguse++ ;
-                    break;
-                case 2 :
-                    info.Fear = Fear++ ;
-                    break;
-                case 3 :
-                    info.Happy = Happy++ ;
-                    break;
-                case 4 :
-                    info.Neutral = Neutral++ ;
-                    break;
-                case 5:
-                    info.Sad = Sad++ ;
-                    break;
-                case 6 :
-                    info.Surprise = Surprise++ ;
-                    break;
-                default :
-                    System.out.println("未知类别");
-            }
-            mHelper.save(info); // 把账单信息保存到数据库
-            Toast.makeText(this, "已保存",Toast.LENGTH_SHORT).show();
-
-            Float score = mText.getScore(getAllDiary());
-            ArrayList<Float> scores=new ArrayList<Float>();
-            loadArray(scores);
-            scores.add(score);
-            saveArray(scores);
-
-            finish();
+            Toast.makeText(this, "请求服务器中...",Toast.LENGTH_SHORT).show();
+            new Thread(() -> {
+                try {
+                    InputStream is = new FileInputStream(chooseImagePath);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+                    {
+                        byte[] b = new byte[1000];
+                        int n;
+                        while ((n = is.read(b)) != -1) {
+                            bos.write(b, 0, n);
+                        }
+                        is.close();
+                    }
+                    byte[] data = Base64.encode(bos.toByteArray(), Base64.DEFAULT);
+                    bos.close();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .retryOnConnectionFailure(true)
+                            .build();
+                    RequestBody body = RequestBody.create(data, MediaType.parse("text/plain; charset=utf-8"));
+                    Request request = new Request.Builder()
+                            .url("http://192.168.233.250/backend/executor/facial_classification")
+                            .post(body)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    Message message = new Message();
+                    message.what = 0;
+                    MessageBody mb = new MessageBody();
+                    mb.response = response.body().string();
+                    mb.info = info;
+                    mb.parent = this;
+                    message.obj = mb;
+                    handler.sendMessage(message);
+                } catch (IOException | RuntimeException e) {
+                    Message message = new Message();
+                    message.what = 0;
+                    MessageBody mb = new MessageBody();
+                    mb.response = "{\"value\":-1}";
+                    mb.info = info;
+                    mb.parent = this;
+                    message.obj = mb;
+                    handler.sendMessage(message);
+                }
+            }).start();
         }
         if(v.getId()==R.id.date){
             DatePickerDialog dialog=new DatePickerDialog(this,this,

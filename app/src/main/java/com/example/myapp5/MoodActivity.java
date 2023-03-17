@@ -247,10 +247,11 @@ public class MoodActivity extends AppCompatActivity {
     //    line.setData(lineData);                //setData()方法把Data传入
 
         // 每一个LineDataSet代表一条线
-        LineDataSet lineDataSet = new LineDataSet(list, name);
-        initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
-        LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
+        // Problem: DataSet unavailable!!
+        //LineDataSet lineDataSet = new LineDataSet(list, name);
+        //initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
+        //LineData lineData = new LineData(lineDataSet);
+        //lineChart.setData(lineData);
     }
 
     /**
