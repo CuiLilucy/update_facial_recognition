@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.util.Synthetic;
 import com.example.myapp5.widge.PieChartManager;
@@ -77,30 +78,7 @@ public class MoodActivity extends AppCompatActivity {
 //        showLineChart(list, "我的收益", Color.CYAN);
     }
 
-//    /**
-//     * 我的收益
-//     */
-//
-//    public class IncomeBean {
-//        /**
-//         * tradeDate : 20180502
-//         * value : 0.03676598
-//         */
-//        private String tradeDate;
-//        private double value;
-//    }
-//
-//    /**
-//     * 沪深创指数
-//     */
-//    public class CompositeIndexBean {
-//        /**
-//         * rate : -0.00034196
-//         * tradeDate : 20180502
-//         */
-//        private String rate;
-//        private String tradeDate;
-//    }
+
     /**
      * 初始化图表
      */
@@ -181,35 +159,12 @@ public class MoodActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     * 展示曲线
-     *
-     * @param dataList 数据集合
-     * @param name     曲线名称
-     * @param color    曲线颜色
-     */
-//    public void showLineChart(List<IncomeBean> dataList, String name, int color) {
-//        List<Entry> entries = new ArrayList<>();
-//        for (int i = 0; i < dataList.size(); i++) {
-//            IncomeBean data = dataList.get(i);
-//            /**
-//             * 在此可查看 Entry构造方法，可发现 可传入数值 Entry(float x, float y)
-//             * 也可传入Drawable， Entry(float x, float y, Drawable icon) 可在XY轴交点 设置Drawable图像展示
-//             */
-//            Entry entry = new Entry(i, (float) data.getValue());
-//            entries.add(entry);
-//        }
-//        // 每一个LineDataSet代表一条线
-//        LineDataSet lineDataSet = new LineDataSet(entries, name);
-//        initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
-//        LineData lineData = new LineData(lineDataSet);
-//        lineChart.setData(lineData);
-//    }
 
     public void showLineChart( String name, int color) {
 
         ArrayList<Float> sites=new ArrayList<Float>();
         loadArray(sites);
+
 //        preferences =getSharedPreferences("value",Context.MODE_PRIVATE);
 //        SharedPreferences.Editor editor = preferences.edit();
 //        editor.putInt("value")
@@ -248,10 +203,10 @@ public class MoodActivity extends AppCompatActivity {
 
         // 每一个LineDataSet代表一条线
         // Problem: DataSet unavailable!!
-        //LineDataSet lineDataSet = new LineDataSet(list, name);
-        //initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
-        //LineData lineData = new LineData(lineDataSet);
-        //lineChart.setData(lineData);
+        LineDataSet lineDataSet = new LineDataSet(list, name);
+        initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
+        LineData lineData = new LineData(lineDataSet);
+        lineChart.setData(lineData);
     }
 
     /**
@@ -278,17 +233,17 @@ public class MoodActivity extends AppCompatActivity {
         yvals.add(new PieEntry(Neutral, "平静"));
         yvals.add(new PieEntry(Anger, "生气"));
         yvals.add(new PieEntry(Fear, "恐惧"));
-        yvals.add(new PieEntry(Anger, "生气"));
-        yvals.add(new PieEntry(Fear, "恐惧"));
+        yvals.add(new PieEntry(Disgust, "恶心"));
+        yvals.add(new PieEntry(Surprise, "惊讶"));
         //设置每份的颜色
         List<Integer> colors = new ArrayList<>();
-        colors.add(Color.parseColor("#6785f2"));
-        colors.add(Color.parseColor("#675cf2"));
-        colors.add(Color.parseColor("#496cef"));
-        colors.add(Color.parseColor("#aa63fa"));
-        colors.add(Color.parseColor("#58a9f5"));
-        colors.add(Color.parseColor("#aa63fa"));
-        colors.add(Color.parseColor("#58a9f5"));
+        colors.add(Color.parseColor("#33ffff"));
+        colors.add(Color.parseColor("#33ccff"));
+        colors.add(Color.parseColor("#3399ff"));
+        colors.add(Color.parseColor("#3366ff"));
+        colors.add(Color.parseColor("#3333ff"));
+        colors.add(Color.parseColor("#3300cc"));
+        colors.add(Color.parseColor("#330066"));
 
         PieChartManager pieChartManager=new PieChartManager(pieChart);
         pieChartManager.showSolidPieChart(yvals,colors);

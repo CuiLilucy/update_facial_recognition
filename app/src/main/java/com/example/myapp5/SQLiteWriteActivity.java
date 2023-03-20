@@ -282,10 +282,6 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             info.xuhao = xuhao;
             info.date = date.getText().toString();
             info.month = 100*calendar.get(Calendar.YEAR) + (calendar.get(Calendar.MONTH)+1);
-            //Toast.makeText(this, "已添加账单", Toast.LENGTH_SHORT).show();
-            //resetPage(); // 重置页面
-            //info.update_time = DateUtil.getNowDateTime("yyyy-MM-dd HH:mm:ss");
-            //mHelper.insert(info); // 执行数据库帮助器的插入操作
             Toast.makeText(this, "请求服务器中...",Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 try {
