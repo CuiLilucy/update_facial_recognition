@@ -58,7 +58,7 @@ public class BillListAdapter extends BaseAdapter implements AdapterView.OnItemCl
         UserInfo bill = mBillList.get(position);
         holder.date.setText(bill.date);
         holder.title.setText(bill.title);
-        holder.text.setText("心情值：");
+        //holder.text.setText("心情值：");
         return convertView;
     }
 

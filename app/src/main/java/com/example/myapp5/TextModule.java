@@ -179,7 +179,6 @@ public class TextModule {
             x = 100 - x;
         x = (float)Math.log(x - 50) / (float)Math.log(6);
         x = 100 * sigmoid(x);
-
         System.out.println(x);
         if (!isPositive) {
             return 100 - x;

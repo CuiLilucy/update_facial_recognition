@@ -186,6 +186,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             }
         }
         date.setText(DateUtil.getDate(calendar)); // 设置账单的发生时间
+
     }
 
     @SuppressLint("HandlerLeak")
@@ -262,6 +263,13 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.save_diary) {
             String title_string = title.getText().toString();
             String text_string = text.getText().toString();
+            LoginActivity LA=new LoginActivity();
+
+            preferences = getSharedPreferences("loginInfo",Context.MODE_PRIVATE);
+            String serverId=preferences.getString("serverId","192.168.56.10");
+
+
+            //String serverId="192.168.43.2";
             AllDiary = title_string+text_string;
 
             Log.d("SQLiteWriteActivity","onClick: "+title_string);
@@ -302,7 +310,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                             .build();
                     RequestBody body = RequestBody.create(data, MediaType.parse("text/plain; charset=utf-8"));
                     Request request = new Request.Builder()
-                            .url("http://192.168.233.250/backend/executor/facial_classification")
+                            .url("http://"+serverId+"/backend/executor/facial_classification")
                             .post(body)
                             .build();
                     Response response = client.newCall(request).execute();
@@ -578,6 +586,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         for(int i=0;i<list.size();i++) {
             editor.remove("score_" + i);
             editor.putFloat("score_" + i, list.get(i));
+            //editor.putString("score_time_"+i,);
         }
         editor.apply();
     }
@@ -592,6 +601,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
 
         }
     }
+
 
 
 }

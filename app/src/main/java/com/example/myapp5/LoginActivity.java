@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
     private Button btn_login;//登录按钮
-    private String uerName,password,spPsw;//获取的用户名，密码，加密密码
-    private EditText user_input,password_input;//编辑框
+    private String uerName,password,spPsw,serverId;//获取的用户名，密码，加密密码,服务器ID
+    private EditText user_input,password_input,serverId_input;//编辑框
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.btn_login);
         user_input=findViewById(R.id.user_input);
         password_input=findViewById(R.id.password_input);
+        serverId_input=findViewById(R.id.server_id);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                 //开始登录，获取用户名和密码 getText().toString().trim();
                 uerName=user_input.getText().toString().trim();
                 password=password_input.getText().toString().trim();
+                serverId=serverId_input.getText().toString().trim();
                 //对当前用户输入的密码进行MD5加密再进行比对判断, MD5Utils.md5( ); psw 进行加密判断是否一致
                 String md5Psw= MD5Utils.md5(password);
                 // md5Psw ; spPsw 为 根据从SharedPreferences中用户名读取密码
@@ -60,9 +62,10 @@ public class LoginActivity extends AppCompatActivity {
                     // md5Psw.equals(); 判断，输入的密码加密后，是否与保存在SharedPreferences中一致
                 }else if(md5Psw.equals(spPsw)){
                     //一致登录成功
-                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                     //保存登录状态，在界面保存登录的用户名 定义个方法 saveLoginStatus boolean 状态 , userName 用户名;
-                    saveLoginStatus(true, uerName);
+                    saveLoginStatus(true, uerName,serverId);
+                    Toast.makeText(LoginActivity.this, "登录成功, 服务器ip："+serverId, Toast.LENGTH_SHORT).show();
+
                     //登录成功后关闭此页面进入主页
                     Intent data=new Intent();
                     //datad.putExtra( ); name , value ;
@@ -97,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      *保存登录状态和登录用户名到SharedPreferences中
      */
-    private void saveLoginStatus(boolean status,String userName){
+    private void saveLoginStatus(boolean status,String userName,String serverId){
         //saveLoginStatus(true, userName);
         //loginInfo表示文件名  SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
         SharedPreferences sp=getSharedPreferences("loginInfo", MODE_PRIVATE);
@@ -107,8 +110,14 @@ public class LoginActivity extends AppCompatActivity {
         editor.putBoolean("isLogin", status);
         //存入登录状态时的用户名
         editor.putString("loginUserName", userName);
+        //存入服务器id
+        editor.putString("serverId", serverId);
+
         //提交修改
         editor.commit();
+    }
+    public String getServerId() {
+        return LoginActivity.this.serverId;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

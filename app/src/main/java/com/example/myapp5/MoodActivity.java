@@ -41,7 +41,7 @@ public class MoodActivity extends AppCompatActivity {
     private YAxis rightYaxis;           //右侧Y轴
     private Legend legend;              //图例
     private LimitLine limitLine;        //限制线
-//  private MyMarkerView markerView;    //标记视图 即点击xy轴交点时弹出展示信息的View 需自定义
+    //  private MyMarkerView markerView;    //标记视图 即点击xy轴交点时弹出展示信息的View 需自定义
     private SharedPreferences preferences;
     private UserDBHelper mHelper;
     public void getScore(){
@@ -78,6 +78,30 @@ public class MoodActivity extends AppCompatActivity {
 //        showLineChart(list, "我的收益", Color.CYAN);
     }
 
+//    /**
+//     * 我的收益
+//     */
+//
+//    public class IncomeBean {
+//        /**
+//         * tradeDate : 20180502
+//         * value : 0.03676598
+//         */
+//        private String tradeDate;
+//        private double value;
+//    }
+//
+//    /**
+//     * 沪深创指数
+//     */
+//    public class CompositeIndexBean {
+//        /**
+//         * rate : -0.00034196
+//         * tradeDate : 20180502
+//         */
+//        private String rate;
+//        private String tradeDate;
+//    }
 
     /**
      * 初始化图表
@@ -165,45 +189,11 @@ public class MoodActivity extends AppCompatActivity {
         ArrayList<Float> sites=new ArrayList<Float>();
         loadArray(sites);
 
-//        preferences =getSharedPreferences("value",Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        editor.putInt("value")
-
-        //首先实例化一个 List  用来储存你的数据
-//        float[] lineFloat = {1,2,3,10,5,6,2,2};
         List<Entry>list=new ArrayList<>();
         for(int i=0;i<sites.size();i++){
             list.add(new Entry(i,sites.get(i)));
         }
-      //  List<Entry>list2=new ArrayList<>(); //第二条线
-
-//然后向List中添加数据
-//其中两个参数对应的分别是   X轴   Y轴
-//        list.add(new Entry(1,10));
-//        list.add(new Entry(2,12));
-//        list.add(new Entry(3,6));
-//        list.add(new Entry(4,6));
-//        list.add(new Entry(5,6));
-//        list.add(new Entry(6,6));
-//为第二条线添加数据
- //       list2.add(new Entry(1,8));
-   //     list2.add(new Entry(2,10));
-     //   list2.add(new Entry(3,7));
-
-//然后创建一个DataSet对象
-//list是你这条线的数据  "语文" 是你对这条线的描述
-    //    LineDataSet lineDataSet=new LineDataSet(list,"语文");
-//再创建一个DataSet对象，把第二条数据添加进DataSet对象
-     //   LineDataSet lineDataSet2=new LineDataSet(list2,"数学");
-
-//创建Data对象
-//        LineData lineData=new LineData(lineDataSet);//把第一个DataSet对象添加到Data
-  //      lineData.addDataSet(lineDataSet2);      //第二个
-    //    line.setData(lineData);                //setData()方法把Data传入
-
-        // 每一个LineDataSet代表一条线
-        // Problem: DataSet unavailable!!
-        LineDataSet lineDataSet = new LineDataSet(list, name);
+         LineDataSet lineDataSet = new LineDataSet(list, name);
         initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);
@@ -262,3 +252,4 @@ public class MoodActivity extends AppCompatActivity {
 
 
 }
+
