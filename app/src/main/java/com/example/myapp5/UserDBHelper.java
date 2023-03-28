@@ -75,7 +75,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
                 +"Anger INTEGER NOT NULL,"+"Disgust INTEGER NOT NULL,"
                 +"Fear INTEGER NOT NULL,"+"Happy INTEGER NOT NULL,"
                 +"Neutral INTEGER NOT NULL,"+"Sad INTEGER NOT NULL,"
-                +"Surprise INTEGER NOT NULL"
+                +"Surprise INTEGER NOT NULL,"+"score FLOAT NOT NULL"
                 //演示数据库升级时要先把下面这行注释
                 //+ ",phone VARCHAR" + ",password VARCHAR"
                 + ");";
@@ -130,6 +130,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
             cv.put("Neutral", info.Neutral);
             cv.put("Surprise", info.Surprise);
             cv.put("Sad", info.Sad);
+            cv.put("score", info.score);
             // 执行插入记录动作，该语句返回插入记录的行号
 
             //test="INSERT INTO user_info VALUES (info.title,info.text);";
@@ -159,6 +160,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
         cv.put("Neutral", info.Neutral);
         cv.put("Surprise", info.Surprise);
         cv.put("Sad", info.Sad);
+        cv.put("score", info.score);
         // 执行更新记录动作，该语句返回更新的记录数量
         mWriteDB.update(TABLE_NAME, cv, condition, null);
         return mWriteDB.update(TABLE_NAME, cv, condition, null);
@@ -173,7 +175,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
 
     // 根据指定条件查询记录，并返回结果数据列表
     public List<UserInfo>query(String condition) {
-        String sql = String.format("select rowid,_id,date,month,title,text,create_time,update_time,Anger,Disgust,Fear,Happy,Neutral,Sad,Surprise " +
+        String sql = String.format("select rowid,_id,date,month,title,text,create_time,update_time,Anger,Disgust,Fear,Happy,Neutral,Sad,Surprise,score " +
                 "from %s where %s;", TABLE_NAME, condition);
         Log.d(TAG, "query sql: " + sql);
         List<UserInfo> infoList = new ArrayList<>();
@@ -197,6 +199,7 @@ public class UserDBHelper extends SQLiteOpenHelper {
             info.Neutral= cursor.getInt(12);
             info.Sad= cursor.getInt(13);
             info.Surprise= cursor.getInt(14);
+            info.score=cursor.getDouble(15);
             infoList.add(info);
         }
         cursor.close(); // 查询完毕，关闭数据库游标
@@ -207,6 +210,10 @@ public class UserDBHelper extends SQLiteOpenHelper {
     }
     public List<UserInfo> queryById(int id) {
         String sql = " _id=" + id + ";";
+        return query(sql);
+    }
+    public List<UserInfo> queryAll() {
+        String sql = " _id!=-1;";
         return query(sql);
     }
     public int sumScore(String condition) {

@@ -16,6 +16,7 @@ public class UserInfo {
     public int Neutral;
     public int Sad;
     public int Surprise;
+    public double score;
 
 
 
@@ -35,6 +36,7 @@ public class UserInfo {
         Surprise=0;
         Neutral=0;
         Fear=0;
+        score=0.0;
 
     }
 

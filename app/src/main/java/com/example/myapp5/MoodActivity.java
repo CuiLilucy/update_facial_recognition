@@ -34,6 +34,7 @@ public class MoodActivity extends AppCompatActivity {
     private int Disgust=0;
     private int Fear=0;
     private int Neutral=0;
+    private double score=0;
     private PieChart pieChart;
     private LineChart lineChart;
     private XAxis xAxis;                //X轴
@@ -53,6 +54,7 @@ public class MoodActivity extends AppCompatActivity {
         Neutral=mHelper.sumScore("Neutral");
         Fear=mHelper.sumScore("Fear");
         Disgust=mHelper.sumScore("Disgust");
+
     }
 
     @Override
@@ -186,14 +188,15 @@ public class MoodActivity extends AppCompatActivity {
 
     public void showLineChart( String name, int color) {
 
-        ArrayList<Float> sites=new ArrayList<Float>();
-        loadArray(sites);
 
         List<Entry>list=new ArrayList<>();
-        for(int i=0;i<sites.size();i++){
-            list.add(new Entry(i,sites.get(i)));
+
+        for(int i=1;i<mHelper.queryAll().size();i++){
+            List<UserInfo> infoList=mHelper.queryById(i);
+            score=infoList.get(0).score;
+            list.add(new Entry(i,(float) score));
         }
-         LineDataSet lineDataSet = new LineDataSet(list, name);
+        LineDataSet lineDataSet = new LineDataSet(list, name);
         initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);

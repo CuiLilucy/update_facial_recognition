@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
                 uerName=user_input.getText().toString().trim();
                 password=password_input.getText().toString().trim();
                 serverId=serverId_input.getText().toString().trim();
+                serverId="192.168.56.10";
                 //对当前用户输入的密码进行MD5加密再进行比对判断, MD5Utils.md5( ); psw 进行加密判断是否一致
                 String md5Psw= MD5Utils.md5(password);
                 // md5Psw ; spPsw 为 根据从SharedPreferences中用户名读取密码

@@ -52,6 +52,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,29 +66,34 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-class MessageBody
-{
-  public UserInfo info;
-  public String response;
-  public SQLiteWriteActivity parent;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+class MessageBody {
+    public UserInfo info;
+    public String response;
+    public String text_response;
+    public SQLiteWriteActivity parent;
 };
 
-public class SQLiteWriteActivity extends AppCompatActivity implements View.OnClickListener,DatePickerDialog.OnDateSetListener {
+public class SQLiteWriteActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
     private static final String TAG = "connectservererror";
     private UserDBHelper mHelper; // 声明一个用户数据库帮助器的对象
     private EditText title;
     private EditText text;
     private TextView date;
-    private Button btn1,btn2;
+    private Button btn1, btn2;
     private String AllDiary = " ";
     private int xuhao;
-    private int Anger=0;
-    private int Happy=0;
-    private int Surprise=0;
-    private int Sad=0;
-    private int Disguse=0;
-    private int Fear=0;
-    private int Neutral=0;
+    private int Anger = 0;
+    private int Happy = 0;
+    private int Surprise = 0;
+    private int Sad = 0;
+    private int Disguse = 0;
+    private int Fear = 0;
+    private int Neutral = 0;
     private Calendar calendar = Calendar.getInstance();
 
     private Context mContext;
@@ -125,8 +131,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
     private Bitmap orc_bitmap;
     private Uri imageUri;
 
-    private TextModule mText;
-    private SharedPreferences  preferences;
+    private SharedPreferences preferences;
 
     //Glide请求图片选项配置
     private RequestOptions requestOptions = RequestOptions.circleCropTransform()
@@ -154,13 +159,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             Python.start(new AndroidPlatform(this));
         }
 
-        // 初始化文本模块。要调用的时候先 getInstance 再 getScore 就可以了.
-        mText = TextModule.getInstance();
-        try {
-            mText.doInit(TextModule.assetFilePath(getApplication(), "model5.pt"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
 
         //检查版本
@@ -178,7 +177,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             if (bill_list.size() > 0) { // 已存在该账单
                 UserInfo bill = bill_list.get(0); // 获取账单信息
                 Date date = DateUtil.formatString(bill.date);
-                calendar.set(Calendar.YEAR, date.getYear()+1900);
+                calendar.set(Calendar.YEAR, date.getYear() + 1900);
                 calendar.set(Calendar.MONTH, date.getMonth());
                 calendar.set(Calendar.DAY_OF_MONTH, date.getDate());
                 title.setText(bill.title);
@@ -199,60 +198,60 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                 MessageBody data = (MessageBody) msg.obj;
                 //Toast.makeText(data.parent, data.response,Toast.LENGTH_SHORT).show();
                 JSONObject json = null;
+                JSONObject json_text = null;
                 try {
-                   json = new JSONObject(data.response);
+                    json = new JSONObject(data.response);
+                    json_text = new JSONObject(data.text_response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 int maxScore = 0;
+                double scores = 0;
                 try {
+                    assert json != null;
                     maxScore = json.getInt("value");
+                    assert json_text != null;
+                    scores = json_text.getDouble("value");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 UserInfo info = data.info;
                 String str = "已保存";
-                switch(maxScore)
-                {
-                    case 0 :
-                        info.Anger = ++Anger ;
+                switch (maxScore) {
+                    case 0:
+                        info.Anger = ++Anger;
                         str = "心情：生气";
                         break;
-                    case 1 :
-                        info.Disgust = ++Disguse ;
+                    case 1:
+                        info.Disgust = ++Disguse;
                         str = "心情：恶心";
                         break;
-                    case 2 :
-                        info.Fear = ++Fear ;
+                    case 2:
+                        info.Fear = ++Fear;
                         str = "心情：害怕";
                         break;
-                    case 3 :
-                        info.Happy = ++Happy ;
+                    case 3:
+                        info.Happy = ++Happy;
                         str = "心情：高兴";
                         break;
-                    case 4 :
-                        info.Neutral = ++Neutral ;
+                    case 4:
+                        info.Neutral = ++Neutral;
                         str = "心情：平静";
                         break;
                     case 5:
-                        info.Sad = ++Sad ;
+                        info.Sad = ++Sad;
                         str = "心情：悲伤";
                         break;
-                    case 6 :
-                        info.Surprise = ++Surprise ;
+                    case 6:
+                        info.Surprise = ++Surprise;
                         str = "心情：惊喜";
                         break;
-                    default :
+                    default:
                         str = "未知类别";
                 }
+                info.score=scores;
                 mHelper.save(info); // 把账单信息保存到数据库
-
-                Toast.makeText(data.parent, str,Toast.LENGTH_SHORT).show();
-                Float score = mText.getScore(getAllDiary());
-                ArrayList<Float> scores=new ArrayList<Float>();
-                loadArray(scores);
-                scores.add(score);
-                saveArray(scores);
+                Toast.makeText(data.parent, str, Toast.LENGTH_SHORT).show();
                 data.parent.finish();
             }
         }
@@ -263,35 +262,58 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         if (v.getId() == R.id.save_diary) {
             String title_string = title.getText().toString();
             String text_string = text.getText().toString();
-            LoginActivity LA=new LoginActivity();
+            LoginActivity LA = new LoginActivity();
 
-            preferences = getSharedPreferences("loginInfo",Context.MODE_PRIVATE);
-            String serverId=preferences.getString("serverId","192.168.56.10");
+            preferences = getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
+            String serverId = preferences.getString("serverId", "192.168.56.10");
 
 
             //String serverId="192.168.43.2";
-            AllDiary = title_string+text_string;
+            AllDiary = title_string + text_string;
 
-            Log.d("SQLiteWriteActivity","onClick: "+title_string);
+            Log.d("SQLiteWriteActivity", "onClick: " + title_string);
             if (TextUtils.isEmpty(title_string)) {
-                Toast toast=Toast.makeText(this, "请先填写题目",Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(this, "请先填写题目", Toast.LENGTH_SHORT);
                 toast.show();
                 return;
             } else if (TextUtils.isEmpty(text_string)) {
-                Toast toast_string=Toast.makeText(this, "请先输入内容",Toast.LENGTH_SHORT);
+                Toast toast_string = Toast.makeText(this, "请先输入内容", Toast.LENGTH_SHORT);
                 toast_string.show();
                 return;
             }
             // 以下声明一个用户信息对象，并填写它的各字段值
-            UserInfo info =new UserInfo();
+            UserInfo info = new UserInfo();
             //Toast.makeText(this, "保存",Toast.LENGTH_SHORT).show();
-            info.title= title_string;
+            info.title = title_string;
             info.text = text_string;
             info.xuhao = xuhao;
             info.date = date.getText().toString();
-            info.month = 100*calendar.get(Calendar.YEAR) + (calendar.get(Calendar.MONTH)+1);
-            Toast.makeText(this, "请求服务器中...",Toast.LENGTH_SHORT).show();
+            info.month = 100 * calendar.get(Calendar.YEAR) + (calendar.get(Calendar.MONTH) + 1);
+            FutureTask<String> text_request = new FutureTask<>(() -> {
+                try {
+                    byte[] data = Base64.encode(AllDiary.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .retryOnConnectionFailure(true)
+                            .build();
+                    RequestBody body = RequestBody.create(data, MediaType.parse("text/plain; charset=utf-8"));
+                    Request request = new Request.Builder()
+                            .url("http://" + serverId + "/backend/executor/text_rating")
+                            .post(body)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String score = response.body().string();
+                    //Toast.makeText(this, score, Toast.LENGTH_SHORT).show();
+                    return score;
+                } catch (IOException | RuntimeException e) {
+                    System.out.println(e.toString());
+                    return "{\"value\":-1}";
+                }
+            });
+            Toast.makeText(this, "请求文字服务器中...", Toast.LENGTH_SHORT).show();
+            text_request.run();
+            Toast.makeText(this, "请求图片服务器中...", Toast.LENGTH_SHORT).show();
             new Thread(() -> {
+                MessageBody mb = new MessageBody();
                 try {
                     InputStream is = new FileInputStream(chooseImagePath);
                     ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
@@ -310,32 +332,36 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                             .build();
                     RequestBody body = RequestBody.create(data, MediaType.parse("text/plain; charset=utf-8"));
                     Request request = new Request.Builder()
-                            .url("http://"+serverId+"/backend/executor/facial_classification")
+                            .url("http://" + serverId + "/backend/executor/facial_classification")
                             .post(body)
                             .build();
                     Response response = client.newCall(request).execute();
-                    Message message = new Message();
-                    message.what = 0;
-                    MessageBody mb = new MessageBody();
                     mb.response = response.body().string();
+                    //Toast.makeText(this, mb.response, Toast.LENGTH_SHORT).show();
+                } catch (IOException | RuntimeException e) {
+                    mb.response = "{\"value\":-1}";
+                    System.out.println(e.toString());
+                    //Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+                try {
                     mb.info = info;
                     mb.parent = this;
-                    message.obj = mb;
-                    handler.sendMessage(message);
-                } catch (IOException | RuntimeException e) {
+                    // Blocked waiting here
+                    mb.text_response = text_request.get();
+                    //Toast.makeText(this, mb.text_response, Toast.LENGTH_SHORT).show();
+
                     Message message = new Message();
                     message.what = 0;
-                    MessageBody mb = new MessageBody();
-                    mb.response = "{\"value\":-1}";
-                    mb.info = info;
-                    mb.parent = this;
                     message.obj = mb;
                     handler.sendMessage(message);
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
             }).start();
         }
-        if(v.getId()==R.id.date){
-            DatePickerDialog dialog=new DatePickerDialog(this,this,
+        if (v.getId() == R.id.date) {
+            DatePickerDialog dialog = new DatePickerDialog(this, this,
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH));
@@ -350,12 +376,13 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         }
         //语音识别
         if (v.getId() == R.id.voice_recognition) {
-            Intent intent=new Intent(SQLiteWriteActivity.this,RecordActivity.class);
+            Intent intent = new Intent(SQLiteWriteActivity.this, RecordActivity.class);
             startActivity(intent);
         }
 
 
     }
+
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         calendar.set(Calendar.YEAR, year);
@@ -446,6 +473,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
 
     /**
      * 返回到Activity
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -460,7 +488,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                     //显示图片
 //                    displayImage(outputImagePath.getAbsolutePath());
                     chooseImagePath = outputImagePath.getAbsolutePath();
-                    fatherImagePath= outputImagePath.getParentFile().getAbsolutePath();
+                    fatherImagePath = outputImagePath.getParentFile().getAbsolutePath();
                     displayImage(chooseImagePath);
                 }
                 break;
@@ -538,27 +566,29 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private Uri getDestinationUri(){
+    private Uri getDestinationUri() {
         String fileName = String.format("face_%s.npg", System.currentTimeMillis());
         File cropFile = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), fileName);
         return Uri.fromFile(cropFile);
     }
+
     //当前路径，拍照回调后需要使用
-    private String currentPath=null;
+    private String currentPath = null;
 
     /**
      * 保存照片路径
+     *
      * @return
      */
-    private File saveFileName(){
+    private File saveFileName() {
         File newFolder = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         Date date = new Date(System.currentTimeMillis());
-        String name =format.format(date)+".npg" ;
+        String name = format.format(date) + ".npg";
 
-        File ji=null;
+        File ji = null;
         try {
-            ji=new File(newFolder+"/"+name);
+            ji = new File(newFolder + "/" + name);
             ji.createNewFile();
             currentPath = ji.getAbsolutePath();
         } catch (Exception e) {
@@ -570,6 +600,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
     public String getChooseImagePath() {
         return chooseImagePath;
     }
+
     public String getFatherImagePath() {
         return fatherImagePath;
     }
@@ -579,11 +610,11 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void saveArray(List<Float> list) {
-        preferences = getSharedPreferences("score",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor= preferences.edit();
-        editor.putInt("score_size",list.size());
+        preferences = getSharedPreferences("score", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("score_size", list.size());
 
-        for(int i=0;i<list.size();i++) {
+        for (int i = 0; i < list.size(); i++) {
             editor.remove("score_" + i);
             editor.putFloat("score_" + i, list.get(i));
             //editor.putString("score_time_"+i,);
@@ -593,15 +624,14 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
 
     public void loadArray(List<Float> list) {
 
-        preferences = getSharedPreferences("score",Context.MODE_PRIVATE);
+        preferences = getSharedPreferences("score", Context.MODE_PRIVATE);
         list.clear();
         int size = preferences.getInt("score_size", 0);
-        for(int i=0;i<size;i++) {
-            list.add(preferences.getFloat("score_" + i,0));
+        for (int i = 0; i < size; i++) {
+            list.add(preferences.getFloat("score_" + i, 0));
 
         }
     }
-
 
 
 }
