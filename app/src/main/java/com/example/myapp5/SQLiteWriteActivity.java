@@ -289,28 +289,8 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
             info.xuhao = xuhao;
             info.date = date.getText().toString();
             info.month = 100 * calendar.get(Calendar.YEAR) + (calendar.get(Calendar.MONTH) + 1);
-            FutureTask<String> text_request = new FutureTask<>(() -> {
-                try {
-                    byte[] data = Base64.encode(AllDiary.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
-                    OkHttpClient client = new OkHttpClient.Builder()
-                            .retryOnConnectionFailure(true)
-                            .build();
-                    RequestBody body = RequestBody.create(data, MediaType.parse("text/plain; charset=utf-8"));
-                    Request request = new Request.Builder()
-                            .url("http://" + serverId + "/backend/executor/text_rating")
-                            .post(body)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String score = response.body().string();
-                    //Toast.makeText(this, score, Toast.LENGTH_SHORT).show();
-                    return score;
-                } catch (IOException | RuntimeException e) {
-                    System.out.println(e.toString());
-                    return "{\"value\":-1}";
-                }
-            });
+
             Toast.makeText(this, "请求文字服务器中...", Toast.LENGTH_SHORT).show();
-            text_request.run();
             Toast.makeText(this, "请求图片服务器中...", Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 MessageBody mb = new MessageBody();
@@ -338,26 +318,38 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                     Response response = client.newCall(request).execute();
                     mb.response = response.body().string();
                     //Toast.makeText(this, mb.response, Toast.LENGTH_SHORT).show();
+
+                    byte[] text_data = Base64.encode(AllDiary.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
+                    OkHttpClient text_client = new OkHttpClient.Builder()
+                            .retryOnConnectionFailure(true)
+                            .build();
+                    RequestBody text_body = RequestBody.create(text_data, MediaType.parse("text/plain; charset=utf-8"));
+                    Request text_request = new Request.Builder()
+                            .url("http://" + serverId + "/backend/executor/text_rating")
+                            .post(text_body)
+                            .build();
+                    Response text_response = text_client.newCall(text_request).execute();
+                    mb.text_response = text_response.body().string();
+                    //Toast.makeText(this, score, Toast.LENGTH_SHORT).show();
+
                 } catch (IOException | RuntimeException e) {
                     mb.response = "{\"value\":-1}";
                     System.out.println(e.toString());
                     //Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
 
                 }
-                try {
-                    mb.info = info;
-                    mb.parent = this;
-                    // Blocked waiting here
-                    mb.text_response = text_request.get();
-                    //Toast.makeText(this, mb.text_response, Toast.LENGTH_SHORT).show();
 
-                    Message message = new Message();
-                    message.what = 0;
-                    message.obj = mb;
-                    handler.sendMessage(message);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                mb.info = info;
+                mb.parent = this;
+                // Blocked waiting here
+
+                //Toast.makeText(this, mb.text_response, Toast.LENGTH_SHORT).show();
+
+                Message message = new Message();
+                message.what = 0;
+                message.obj = mb;
+                handler.sendMessage(message);
+
             }).start();
         }
         if (v.getId() == R.id.date) {

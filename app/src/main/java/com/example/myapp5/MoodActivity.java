@@ -191,10 +191,10 @@ public class MoodActivity extends AppCompatActivity {
 
         List<Entry>list=new ArrayList<>();
 
-        for(int i=1;i<mHelper.queryAll().size();i++){
+        for(int i=1;i<mHelper.queryAll().size()+1;i++){
             List<UserInfo> infoList=mHelper.queryById(i);
             score=infoList.get(0).score;
-            list.add(new Entry(i,(float) score));
+            list.add(new Entry(i-1,(float) score));
         }
         LineDataSet lineDataSet = new LineDataSet(list, name);
         initLineDataSet(lineDataSet, color, LineDataSet.Mode.LINEAR);
