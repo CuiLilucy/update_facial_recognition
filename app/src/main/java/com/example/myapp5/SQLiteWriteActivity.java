@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -26,6 +27,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -52,6 +58,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,6 +93,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
     private TextView date;
     private Button btn1, btn2;
     private String AllDiary = " ";
+    private String voice = "";
     private int xuhao;
     private int Anger = 0;
     private int Happy = 0;
@@ -133,6 +141,15 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
 
     private SharedPreferences preferences;
 
+    private ActivityResultLauncher resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+                if (data != null && result.getResultCode() == RESULT_OK) {
+                    voice = data.getStringExtra("voice");
+                }
+            });
+
     //Glide请求图片选项配置
     private RequestOptions requestOptions = RequestOptions.circleCropTransform()
             .diskCacheStrategy(DiskCacheStrategy.NONE)//不做磁盘缓存
@@ -158,8 +175,6 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
         }
-
-
 
 
         //检查版本
@@ -249,7 +264,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
                     default:
                         str = "未知类别";
                 }
-                info.score=scores;
+                info.score = scores;
                 mHelper.save(info); // 把账单信息保存到数据库
                 Toast.makeText(data.parent, str, Toast.LENGTH_SHORT).show();
                 data.parent.finish();
@@ -269,7 +284,7 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
 
 
             //String serverId="192.168.43.2";
-            AllDiary = title_string + text_string;
+            AllDiary = title_string + text_string + voice;
 
             Log.d("SQLiteWriteActivity", "onClick: " + title_string);
             if (TextUtils.isEmpty(title_string)) {
@@ -368,11 +383,14 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         }
         //语音识别
         if (v.getId() == R.id.voice_recognition) {
-            Intent intent = new Intent(SQLiteWriteActivity.this, RecordActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(SQLiteWriteActivity.this, Record_baidu_api.class);
+            resultLauncher.launch(intent);
         }
+    }
 
-
+    public void onVoiceCallback(String text) {
+        voice = text;
+        Toast.makeText(this, voice, Toast.LENGTH_SHORT).show();
     }
 
     @Override

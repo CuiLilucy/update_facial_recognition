@@ -71,4 +71,6 @@ dependencies {
     implementation 'org.pytorch:pytorch_android_lite:1.12.2'
     implementation 'org.pytorch:pytorch_android_torchvision_lite:1.12.2'
 
+    //接入百度语音识别接口
+    implementation project(path: ':core')
 }

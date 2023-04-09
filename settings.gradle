@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "MyApp5"
 include ':app'
+include ':core'
