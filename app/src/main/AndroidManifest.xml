@@ -27,7 +27,7 @@
         android:theme="@style/Theme.MyApp5"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".RecordActivity"
+            android:name=".BaiduRecord"
             android:exported="false" />
         <activity
             android:name=".PersonalActivity"

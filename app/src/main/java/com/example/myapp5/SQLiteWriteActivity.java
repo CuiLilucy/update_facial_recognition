@@ -368,8 +368,10 @@ public class SQLiteWriteActivity extends AppCompatActivity implements View.OnCli
         }
         //语音识别
         if (v.getId() == R.id.voice_recognition) {
-            Intent intent = new Intent(SQLiteWriteActivity.this, RecordActivity.class);
+            Intent intent=new Intent(SQLiteWriteActivity.this,BaiduRecord.class);
             startActivity(intent);
+
+
         }
 
 
